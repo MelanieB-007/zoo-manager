@@ -1,0 +1,279 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model animal {
+  id           Int        @id @default(autoincrement())
+  releaseDate  DateTime?
+  price        Int?
+  priceTypeId  Int?
+  priceType    priceType? @relation(fields: [priceTypeId], references: [id])
+  sellingPrice Int?
+  popularity   Int?
+  releaseExp   Int?
+  image        String?    @db.VarChar(255)
+
+  //Biome & Platz
+  biomeId Int
+  biome   biome @relation(fields: [biomeId], references: [id])
+  size    Int?
+  gameId  Int?
+
+  // Zucht & Stall
+  shelterLevel        Int?
+  breedingCost        Int?
+  breedingDuration    Int?
+  breedingProbability Int?
+
+  // --- NEU: Dynamische Relationen ---
+  statue             statue?
+  animalText         animalText[]
+  animalsOrigin      animalOrigin[]
+  specialCoat        specialCoat[]
+  animalPerEnclosure animalPerEnclosure[]
+  animalXp           animalXp[]
+  contestDonations   contestDonation[]
+}
+
+model animalText {
+  id                Int     @id @default(autoincrement())
+  animalId          Int
+  animal            animal  @relation(fields: [animalId], references: [id], onDelete: Cascade)
+  languageCode      String  @db.VarChar(5)
+  animalName        String  @db.VarChar(255)
+  animalDescription String? @db.Text
+
+  @@unique([animalId, languageCode])
+}
+
+model animalOrigin {
+  id       Int  @id @unique(map: "originindex") @default(autoincrement())
+  animalId Int
+  originId Int?
+
+  animal animal  @relation(fields: [animalId], references: [id], onDelete: Cascade)
+  origin origin? @relation(fields: [originId], references: [id], onDelete: Cascade)
+
+  @@index([animalId])
+  @@index([originId])
+}
+
+model animalXp {
+  id         Int    @id @unique(map: "xpindex") @default(autoincrement())
+  animalId   Int
+  xpTypeId   Int
+  xpValue    Int?
+  xpDuration Int?
+  animal     animal @relation(fields: [animalId], references: [id], onDelete: Cascade)
+  xpType     xpType @relation(fields: [xpTypeId], references: [id])
+
+  @@index([animalId])
+  @@index([xpTypeId])
+}
+
+model xpType {
+  id          Int          @id @default(autoincrement())
+  name        String       @db.VarChar(50) // Interner Name
+  xpTypeTexts xpTypeText[]
+  animalXps   animalXp[]
+}
+
+model xpTypeText {
+  id           Int    @id @default(autoincrement())
+  xpTypeId     Int
+  languageCode String @db.VarChar(5)
+  typeName     String @db.VarChar(255) // z.B. "Füttern" oder "Feeding"
+
+  xpType xpType @relation(fields: [xpTypeId], references: [id], onDelete: Cascade)
+
+  @@unique([xpTypeId, languageCode])
+}
+
+model animalPerEnclosure {
+  animalId        Int
+  animal          animal @relation(fields: [animalId], references: [id], onDelete: Cascade)
+  numberAnimals   Int
+  numberEnclosure Int
+
+  @@id([animalId, numberAnimals])
+}
+
+model language {
+  code String  @id @db.VarChar(5)
+  name String  @db.VarChar(50)
+  flag String?
+}
+
+model biome {
+  id                        Int          @id @unique(map: "biomeindex") @default(autoincrement())
+  price                     Int?
+  priceTypeId               Int?
+  expansionsCost            Int?
+  priceTypeExpansionsCostId Int?
+  size                      Int?
+  image                     String?      @db.VarChar(255)
+  animals                   animal[]
+  biomesTexts               biomesText[]
+}
+
+model biomesText {
+  id               Int     @id @default(autoincrement())
+  biomeId          Int
+  languageCode     String  @db.VarChar(5)
+  biomeName        String  @db.VarChar(255)
+  biomeDescription String? @db.Text
+  biome            biome   @relation(fields: [biomeId], references: [id], onDelete: Cascade)
+
+  @@unique([biomeId, languageCode])
+}
+
+model specialCoat {
+  id                Int                @id @unique(map: "specialCoatesindex") @default(autoincrement())
+  animalId          Int
+  animal            animal             @relation(fields: [animalId], references: [id], onDelete: Cascade)
+  coatColor         String             @db.VarChar(20)
+  originId          Int
+  origin            origin             @relation(fields: [originId], references: [id])
+  releaseDate       DateTime
+  image             String?            @db.VarChar(255)
+  specialCoatsTexts specialCoatsText[]
+
+  @@index([animalId])
+}
+
+model specialCoatsText {
+  id            Int         @id @default(autoincrement())
+  specialCoatId Int
+  languageCode  String      @db.VarChar(5)
+  color         String      @db.VarChar(255)
+  specialCoat   specialCoat @relation(fields: [specialCoatId], references: [id], onDelete: Cascade)
+
+  @@unique([specialCoatId, languageCode])
+}
+
+model origin {
+  id    Int     @id @unique(map: "originindex") @default(autoincrement())
+  name  String  @db.VarChar(50)
+  image String? @db.VarChar(255)
+
+  animalOrigin  animalOrigin[]
+  specialCoates specialCoat[]
+  originTexts   originText[]
+}
+
+model originText {
+  id                Int     @id @default(autoincrement())
+  originId          Int
+  languageCode      String  @db.VarChar(5)
+  originName        String  @db.VarChar(255)
+  originDescription String? @db.Text
+  origin            origin  @relation(fields: [originId], references: [id], onDelete: Cascade)
+
+  @@unique([originId, languageCode])
+}
+
+model priceType {
+  id             Int             @id @unique(map: "pricetypeindex") @default(autoincrement())
+  name           String          @db.VarChar(50)
+  image          String?         @db.VarChar(50)
+  animals        animal[]
+  priceTypeTexts priceTypeText[]
+}
+
+model priceTypeText {
+  id            Int       @id @default(autoincrement())
+  priceTypeId   Int
+  languageCode  String    @db.VarChar(5)
+  priceTypeName String    @db.VarChar(255)
+  priceType     priceType @relation(fields: [priceTypeId], references: [id], onDelete: Cascade)
+
+  @@unique([priceTypeId, languageCode])
+}
+
+model user {
+  id               Int               @unique
+  name             String?           @db.VarChar(255)
+  email            String?           @unique @db.VarChar(255)
+  image            String?           @db.Text
+  roleId           Int
+  role             role              @relation(fields: [roleId], references: [id])
+  last_login       DateTime?         @default(now()) @db.DateTime(0)
+  contestDonations contestDonation[]
+}
+
+model role {
+  id         Int         @unique
+  name       String      @default("Besucher") @db.VarChar(20)
+  rolesTexts rolesText[]
+  user       user[]
+}
+
+model rolesText {
+  id           Int    @id @default(autoincrement())
+  roleId       Int
+  languageCode String @db.VarChar(5)
+  roleName     String @db.VarChar(255)
+  role         role   @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, languageCode])
+}
+
+model contest {
+  id               Int               @id @unique(map: "contests") @default(autoincrement())
+  startDate        DateTime
+  endDate          DateTime
+  active           Int
+  statues          contestStatue[]
+  contestDonations contestDonation[]
+}
+
+model contestStatue {
+  id        Int @id @default(autoincrement())
+  contestId Int
+  statueId  Int
+
+  contest contest @relation(fields: [contestId], references: [id], onDelete: Cascade)
+  statue  statue  @relation(fields: [statueId], references: [id], onDelete: Cascade)
+}
+
+model statue {
+  id           Int             @id @unique(map: "conteststatuesindex") @default(autoincrement())
+  animalId     Int             @unique
+  animal       animal          @relation(fields: [animalId], references: [id])
+  price        Int?
+  priceTypeId  Int?
+  popularity   Int?
+  sellingPrice Int?
+  image        String?         @db.VarChar(255)
+  contests     contestStatue[]
+  statueTexts  statueText[]
+}
+
+model statueText {
+  id           Int    @id @default(autoincrement())
+  statueId     Int
+  languageCode String @db.VarChar(5)
+  statueName   String @db.VarChar(255)
+  statue       statue @relation(fields: [statueId], references: [id], onDelete: Cascade)
+
+  @@unique([statueId, languageCode])
+}
+
+model contestDonation {
+  id          Int     @id @default(autoincrement())
+  contestId   Int
+  contest     contest @relation(fields: [contestId], references: [id], onDelete: Cascade)
+  userId      Int
+  user        user    @relation(fields: [userId], references: [id])
+  animalId    Int
+  animal      animal  @relation(fields: [animalId], references: [id])
+  puzzlePiece Int
+
+  @@index([contestId])
+  @@index([userId])
+}
