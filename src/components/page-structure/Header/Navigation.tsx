@@ -116,7 +116,7 @@ const NavItem = styled.li`
     transform: translateY(0);
   }
 
-  &:hover {
+  &:hover .arrow {
     transform: rotate(180deg);
   }
 `;
@@ -145,6 +145,10 @@ const NavElementStyles = css`
     transform: translateY(-1px);
     box-shadow: ${({ theme }) => theme.shadows.shadowHeaderButtonHover};
     background: ${({ theme }) => theme.colors.brand.orangeLight};
+  }
+
+  .arrow {
+    transition: transform 0.3s ease;
   }
 `;
 
@@ -199,6 +203,7 @@ const Dropdown = styled.ul`
   border: ${({ theme }) => theme.glassBorder};
   border-radius: ${({ theme }) => theme.borderRadius};
   box-shadow: ${({ theme }) => theme.shadows.soft};
+  overflow: hidden;
 
   list-style: none;
   padding: 0.5rem 0;
