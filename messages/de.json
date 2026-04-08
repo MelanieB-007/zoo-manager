@@ -2,5 +2,15 @@
   "home": {
     "title": "Zoo 2: Animal Park Manager",
     "badge": "Community Projekt"
+  },
+  "Navigation": {
+    "home": "Home",
+    "animals": "Tiere",
+    "animal_overview": "Tierübersicht",
+    "animal_create": "Tier anlegen",
+    "club": "Klub",
+    "club_statues": "Statuen",
+    "club_contests": "Wettbewerbe",
+    "club_create_contest": "Wettbewerb anlegen"
   }
 }
