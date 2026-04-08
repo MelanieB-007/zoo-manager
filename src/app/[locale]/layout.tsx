@@ -7,8 +7,6 @@ import React from "react";
 import Providers from "@/components/Providers";
 import Header from "@/components/page-structure/Header/Header";
 
-import "../globals.css";
-
 export const metadata: Metadata = {
   title: "Zoo 2: Animal Park Manager",
   description: "Klub der tollen Tiere - Community Tool",
