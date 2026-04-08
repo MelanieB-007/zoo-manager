@@ -2,9 +2,13 @@ import { Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import StyledComponentsRegistry from "@/lib/registry";
-import "../globals.css"; // Deine CSS-Variablen laden
+import React from "react";
 
-// Hier definierst du den Titel für den Browser-Tab
+import Providers from "@/components/Providers";
+import Header from "@/components/page-structure/Header/Header";
+
+import "../globals.css";
+
 export const metadata: Metadata = {
   title: "Zoo 2: Animal Park Manager",
   description: "Klub der tollen Tiere - Community Tool",
@@ -22,10 +26,13 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale}>
-      <body style={{ margin: 0 }}>
+      <body>
         <StyledComponentsRegistry>
-          <NextIntlClientProvider messages={messages}>
-            {children}
+          <NextIntlClientProvider locale={locale} messages={messages}>
+            {/* Hier kommen alle Client-Kontexte rein */}
+            <Providers>
+              <Header />
+            </Providers>
           </NextIntlClientProvider>
         </StyledComponentsRegistry>
       </body>
