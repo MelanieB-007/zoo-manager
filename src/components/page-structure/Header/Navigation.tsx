@@ -6,85 +6,62 @@ import { useTranslations } from "next-intl";
 import { useSession } from "next-auth/react";
 
 import { Link, usePathname } from "@/i18n/routing";
+import { navConfig } from "@/config/navigationData";
 
 export default function Navigation() {
-  const t = useTranslations("Navigation"); // Namespace in deiner de.json/en.json
+  const t = useTranslations("Navigation");
   const { data: session } = useSession();
-  const pathname = usePathname(); // Gibt den Pfad OHNE /de oder /en zurück
+  const pathname = usePathname();
 
-  const isActive = (path: string) =>
-    pathname === path || (path !== "/" && pathname.startsWith(path));
+  // Prüft, ob ein Hauptmenüpunkt (oder eines seiner Untermenüs) aktiv ist
+  const checkActive = (item: any) => {
+    if (item.href) return pathname === item.href;
+    if (item.basePath) return pathname.startsWith(item.basePath);
+    return false;
+  };
 
   return (
     <NavContainer>
       <NavList>
-        {/* Home */}
-        <NavItem>
-          <NavLink href="/" $active={pathname === "/"}>
-            {t("home")}
-          </NavLink>
-        </NavItem>
+        {navConfig.map((item) => {
+          // Auth-Check für Hauptpunkt
+          if (item.requiresAuth && !session) return null;
 
-        {/* Tiere Dropdown */}
-        <NavItem>
-          <NavButton $active={isActive("/animals")}>
-            {t("animals")} <IoChevronDown className="arrow" />
-          </NavButton>
-          <Dropdown>
-            <li>
-              <DropdownLink href="/animals" $active={pathname === "/animals"}>
-                {t("animal_overview")}
-              </DropdownLink>
-            </li>
-            {session && (
-              <li>
-                <DropdownLink
-                  href="/animals/create"
-                  $active={pathname === "/animals/create"}
-                >
-                  {t("animal_create")}
-                </DropdownLink>
-              </li>
-            )}
-          </Dropdown>
-        </NavItem>
+          return (
+            <NavItem key={item.id}>
+              {item.href && !item.subMenu ? (
+                // Fall A: Einfacher Link
+                <NavLink href={item.href} $active={pathname === item.href}>
+                  {t(item.labelKey)}
+                </NavLink>
+              ) : (
+                // Fall B: Dropdown
+                <>
+                  <NavButton $active={checkActive(item)}>
+                    {t(item.labelKey)} <IoChevronDown className="arrow" />
+                  </NavButton>
+                  <Dropdown>
+                    {item.subMenu?.map((sub) => {
+                      // Auth-Check für Untermenü-Punkte
+                      if (sub.requiresAuth && !session) return null;
 
-        {/* Klub Dropdown */}
-        <NavItem>
-          <NavButton $active={isActive("/contests")}>
-            {t("club")} <IoChevronDown className="arrow" />
-          </NavButton>
-          <Dropdown>
-            <li>
-              <DropdownLink
-                href="/contests/statues"
-                $active={pathname === "/contests/statues"}
-              >
-                {t("club_statues")}
-              </DropdownLink>
-            </li>
-            {session && (
-              <>
-                <li>
-                  <DropdownLink
-                    href="/contests"
-                    $active={pathname === "/contests"}
-                  >
-                    {t("club_contests")}
-                  </DropdownLink>
-                </li>
-                <li>
-                  <DropdownLink
-                    href="/contests/create"
-                    $active={pathname === "/contests/create"}
-                  >
-                    {t("club_create_contest")}
-                  </DropdownLink>
-                </li>
-              </>
-            )}
-          </Dropdown>
-        </NavItem>
+                      return (
+                        <li key={sub.href}>
+                          <DropdownLink
+                            href={sub.href}
+                            $active={pathname === sub.href}
+                          >
+                            {t(sub.labelKey)}
+                          </DropdownLink>
+                        </li>
+                      );
+                    })}
+                  </Dropdown>
+                </>
+              )}
+            </NavItem>
+          );
+        })}
       </NavList>
     </NavContainer>
   );
@@ -94,7 +71,7 @@ const NavContainer = styled.nav`
   display: flex;
   align-items: center;
 
-  @media (max-width: 767px) {
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
     display: none;
   }
 `;

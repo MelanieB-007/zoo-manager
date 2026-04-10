@@ -6,6 +6,7 @@ import styled from "styled-components";
 
 import Navigation from "@/components/page-structure/Header/Navigation";
 import Logo from "@/components/page-structure/Header/Logo";
+import MobileNavigation from "@/components/page-structure/Header/MobileNavigation";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -38,8 +39,7 @@ export default function Header() {
         {isMenuOpen ? <IoClose size={32} /> : <IoMenu size={32} />}
       </MobileMenuButton>
 
-      {/* Mobile Nav kriegt die übersetzten Links intern */}
-      {/*<MobileNavigation isOpen={isMenuOpen} onClose={toggleMenu} />*/}
+      <MobileNavigation isOpen={isMenuOpen} onClose={toggleMenu} />
 
       <NavSection>
         <Navigation />
