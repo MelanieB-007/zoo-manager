@@ -6,6 +6,8 @@ import React from "react";
 
 import Providers from "@/components/Providers";
 import Header from "@/components/page-structure/Header/Header";
+import Main from "@/components/page-structure/Main/Main";
+import Footer from "@/components/page-structure/Footer/Footer";
 
 export const metadata: Metadata = {
   title: "Zoo 2: Animal Park Manager",
@@ -30,6 +32,8 @@ export default async function LocaleLayout({
             {/* Hier kommen alle Client-Kontexte rein */}
             <Providers>
               <Header />
+              <Main>{children}</Main>
+              <Footer />
             </Providers>
           </NextIntlClientProvider>
         </StyledComponentsRegistry>

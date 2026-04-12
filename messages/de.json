@@ -21,5 +21,8 @@
     "role_Employee": "Mitarbeiter",
     "role_Member": "Mitglied",
     "role_Visitor": "Besucher"
+  },
+  "Footer": {
+   "footer_imprint": "Impressum"
   }
 }
