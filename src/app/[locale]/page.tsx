@@ -1,27 +1,39 @@
-"use client";
-import styled from "styled-components";
-import { useTranslations } from "next-intl";
+import { prisma } from "@/lib/prisma";
+import { getTranslations } from "next-intl/server";
+import PageWrapper from "@/components/page-structure/PageWrapper";
+import {
+  getCountAnimals,
+  getCountSpecialCoats,
+} from "@/services/AnimalService";
+import HomeView from "@/components/pages/home/HomeViex";
 
-const Container = styled.div`
-  background: ${({ theme }) => theme.colors.ui.bodyBg};
-  color: ${({ theme }) => theme.colors.brand.petrol};
-  padding: 50px;
-  min-height: 100vh;
-  font-family: sans-serif;
-`;
+export default async function IndexPage() {
+  const t = await getTranslations("home");
 
-const Title = styled.h1`
-  color: ${({ theme }) => theme.colors.brand.green};
-`;
+  // Daten auf dem Server holen
+  const stats = {
+    tierCount: await getCountAnimals(),
+    specialCoatCount: await getCountSpecialCoats(),
+    habitatCount: await prisma.biome.count(),
+  };
 
-export default function HomePage() {
-  const t = useTranslations("home");
+  const trans = {
+    badge_community: t("badge_community"),
+    stats_animals: t("stats.animals"),
+    stats_specialCoat: t("stats.specialCoat"),
+    stats_biomes: t("stats.biomes"),
+    stats_regions: t("stats.regions"),
+    cards_lexicon_title: t("cards.lexicon.title"),
+    cards_lexicon_text: t("cards.lexicon.text"),
+    cards_specialCoat_title: t("cards.specialCoat.title"),
+    cards_specialCoat_text: t("cards.specialCoat.text"),
+    cards_club_title: t("cards.club.title"),
+    cards_club_text: t("cards.club.text"),
+  };
 
   return (
-    <Container>
-      <Title>{t("title")}</Title>
-      <p>{t("badge")}</p>
-      <p style={{ color: "grey" }}>Das Theme und die Sprache funktionieren!</p>
-    </Container>
+    <PageWrapper>
+      <HomeView stats={stats} t={trans} />
+    </PageWrapper>
   );
 }

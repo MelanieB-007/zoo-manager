@@ -32,6 +32,8 @@ export const theme = {
       petrolDark: "#056d42",
       green: "#68B300",
       greenLight: "#a3cfbb",
+      greenDark: "#2d5a27",
+      lime: "#d6efc0",
       yellowLight: "#DAE67F",
       orange: "#FF8C00",
       orangeLight: "rgba(255, 165, 0, 1)",
@@ -39,6 +41,7 @@ export const theme = {
       grey: "rgba(255, 255, 255, 0.3)",
       greyLight: "rgba(255, 255, 255, 0.4)",
       warmWhite: "#fceabb",
+      honeydew: "#e8f5d7",
     },
     ui: {
       bodyBg: "#f0f2f5",
