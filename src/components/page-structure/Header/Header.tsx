@@ -7,6 +7,7 @@ import styled from "styled-components";
 import Navigation from "@/components/page-structure/Header/Navigation";
 import Logo from "@/components/page-structure/Header/Logo";
 import MobileNavigation from "@/components/page-structure/Header/MobileNavigation";
+import Login from "@/components/page-structure/Header/Login";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -46,8 +47,7 @@ export default function Header() {
       </NavSection>
 
       <RightSection>
-        Login
-        {/*<Login />*/}
+        <Login />
       </RightSection>
     </StyledHeader>
   );

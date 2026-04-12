@@ -7,7 +7,8 @@ import { useTranslations } from "next-intl";
 import { useSession } from "next-auth/react";
 
 import { Link } from "@/i18n/routing";
-import { navConfig } from "@/config/navigationData"; // Unser i18n Link-Wrapper
+import { navConfig } from "@/config/navigationData";
+import Login from "@/components/page-structure/Header/Login"; // Unser i18n Link-Wrapper
 //import Login from "./Login";
 
 // @ts-ignore
@@ -66,7 +67,9 @@ export default function MobileNavigation({ isOpen, onClose }) {
 
         <Divider />
 
-        <LoginContainer>{/*<Login />*/}</LoginContainer>
+        <LoginContainer>
+          <Login />
+        </LoginContainer>
       </MenuContent>
     </Overlay>
   );

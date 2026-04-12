@@ -1,10 +1,12 @@
 generator client {
   provider      = "prisma-client-js"
   binaryTargets = ["native", "rhel-openssl-3.0.x"]
+  engineType    = "library"
 }
 
 datasource db {
   provider = "mysql"
+  url      = env("DATABASE_URL")
 }
 
 model animal {
@@ -18,7 +20,7 @@ model animal {
   releaseExp   Int?
   image        String?    @db.VarChar(255)
 
-  //Biome & Platz
+  // Biome & Platz
   biomeId Int
   biome   biome @relation(fields: [biomeId], references: [id])
   size    Int?
